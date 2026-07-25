@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+
+        <h2>Exercise Details</h2>
+
+        <p>
+            <strong>ID:</strong>
+            <span th:text="${exercise.id}"></span>
+        </p>
+
+        <p>
+            <strong>Name:</strong>
+            <span th:text="${exercise.name}"></span>
+        </p>
+
+        <p>
+            <strong>Type:</strong>
+            <span th:text="${exercise.type}"></span>
+        </p>
+
+        <p>
+            <strong>Calories per Minute:</strong>
+            <span th:text="${exercise.caloriesPerMinute}"></span>
+        </p>
+
+        <a th:href="@{/exercises/edit/{id}(id=${exercise.id})}">
+            Edit
+        </a>
+
+        |
+
+        <a th:href="@{/exercises}">
+            Back to Exercise List
+        </a>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

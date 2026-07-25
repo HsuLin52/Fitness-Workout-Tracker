@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title
+            th:text="${exercise.id == null}
+              ? 'Add Exercise'
+              : 'Edit Exercise'">
+      Exercise Form
+    </title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+
+        <h2
+                th:text="${exercise.id == null}
+                ? 'Add Exercise'
+                : 'Edit Exercise'">
+        </h2>
+
+        <form
+                th:action="${exercise.id == null}
+                ? @{/exercises/add}
+                : @{/exercises/edit}"
+                th:object="${exercise}"
+                method="post">
+
+          <input type="hidden" th:field="*{id}">
+
+          <div>
+              <label for="name">Exercise Name:</label>
+
+              <input
+                      type="text"
+                      id="name"
+                      th:field="*{name}"
+              >
+
+              <p
+                      class="error"
+                      th:if="${#fields.hasErrors('name')}"
+                      th:errors="*{name}">
+              </p>
+          </div>
+
+          <br>
+
+          <div>
+              <label for="type">Exercise Type:</label>
+
+              <select id="type" th:field="*{type}">
+                <option value="">Select a type</option>
+
+                <option
+                        th:each="exerciseType : ${exerciseTypes}"
+                        th:value="${exerciseType}"
+                        th:text="${exerciseType}">
+                </option>
+              </select>
+
+              <p
+                      class="error"
+                      th:if="${#fields.hasErrors('name')}"
+                      th:errors="*{name}">
+              </p>
+          </div>
+
+          <br>
+
+          <div>
+              <label for="caloriesPerMinute">
+                Calories per Minute:
+              </label>
+
+              <input
+                      type="number"
+                      id="caloriesPerMinute"
+                      th:field="*{caloriesPerMinute}"
+                      step="0.1"
+                      min="0.1"
+              >
+
+              <p
+                      class="error"
+                      th:if="${#fields.hasErrors('name')}"
+                      th:errors="*{name}">
+              </p>
+          </div>
+
+          <br>
+
+          <button type="submit">
+              Save Exercise
+          </button>
+
+          <a th:href="@{/exercises}">
+              Cancel
+          </a>
+
+        </form>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

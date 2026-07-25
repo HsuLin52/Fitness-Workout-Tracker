@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+
+        <h2>Exercise Catalogue</h2>
+
+        <form th:action="@{/exercises}" method="get">
+
+            <label for="keyword">Search by name:</label>
+            <input
+                    type="text"
+                    id="keyword"
+                    name="keyword"
+                    th:value="${keyword}"
+                    placeholder="Enter exercise name"
+            >
+
+            <label for="type">Exercise type:</label>
+            <select id="type" name="type">
+                <option value="">All types</option>
+
+                <option
+                        th:each="exerciseType : ${exerciseTypes}"
+                        th:value="${exerciseType}"
+                        th:text="${exerciseType}"
+                        th:selected="${exerciseType == selectedType}">
+                </option>
+            </select>
+
+            <button type="submit">Search</button>
+
+            <a th:href="@{/exercises}">Clear</a>
+        </form>
+
+        <br>
+
+        <a th:href="@{/exercises/add}">Add New Exercise</a>
+
+        <br><br>
+
+        <p th:if="${#lists.isEmpty(exercises)}">
+            No exercises found.
+        </p>
+
+        <table
+                th:unless="${#lists.isEmpty(exercises)}"
+                border="1"
+                cellpadding="8">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Calories per Minute</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="exercise : ${exercises}">
+                <td th:text="${exercise.id}"></td>
+                <td th:text="${exercise.name}"></td>
+                <td th:text="${exercise.type}"></td>
+                <td th:text="${exercise.caloriesPerMinute}"></td>
+
+                <td>
+                    <a th:href="@{/exercises/{id}(id=${exercise.id})}">
+                        View
+                    </a>
+
+                    |
+
+                    <a th:href="@{/exercises/edit/{id}(id=${exercise.id})}">
+                        Edit
+                    </a>
+
+                    |
+
+                    <a
+                            th:href="@{/exercises/delete/{id}(id=${exercise.id})}"
+                            onclick="return confirm('Are you sure you want to delete this exercise?')">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

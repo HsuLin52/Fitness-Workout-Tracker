@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header">
+    <h1>Fitness Workout Tracker</h1>
+
+    <nav>
+        <a th:href="@{/exercises}">Exercises</a>
+        <a th:href="@{/exercises/add}">Add Exercise</a>
+    </nav>
+
+    <hr>
+</header>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Workout Plans</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+  <h2>Workout Plans</h2>
+
+  <br>
+
+  <a th:href="@{/plans/new}" class="btn btn-add">
+    Add Workout Plan
+  </a>
+
+  <br><br>
+
+  <p th:if="${#lists.isEmpty(plans)}">
+    No workout plans found.
+  </p>
+
+  <table
+          th:unless="${#lists.isEmpty(plans)}"
+          border="1"
+          cellpadding="8">
+
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Goal</th>
+      <th>Created Date</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr th:each="plan : ${plans}">
+
+      <td th:text="${plan.id}"></td>
+
+      <td th:text="${plan.name}"></td>
+
+      <td th:text="${plan.goal}"></td>
+
+      <td th:text="${plan.createdDate}"></td>
+
+      <td class="actions">
+
+        <a th:href="@{/plans/{id}(id=${plan.id})}"
+           class="btn btn-view">
+          View
+        </a>
+
+        <a th:href="@{/plans/edit/{id}(id=${plan.id})}"
+           class="btn btn-edit">
+          Edit
+        </a>
+
+        <a th:href="@{/plans/delete/{id}(id=${plan.id})}"
+           class="btn btn-delete"
+           onclick="return confirm('Are you sure you want to delete this workout plan?')">
+          Delete
+        </a>
+
+      </td>
+
+    </tr>
+
+    </tbody>
+
+  </table>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -1,91 +1,250 @@
-/* General page styling */
+/* General Page Styling */
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #f4f6f8;
-    color: #222;
+font-family: Arial, sans-serif;
+height: 100%;
+margin: 0;
+background-color: #f1f8e9;
+color: black;
+line-height: 1.6;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
 }
 
-/* Main page content */
+/* Main Content*/
+
 main {
-    width: 90%;
-    max-width: 1100px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 25px;
-    border-radius: 8px;
+flex: 1;
+width: 90%;
+max-width: 1100px;
+margin: 35px auto;
+background-color: white;
+padding: 30px;
+border-radius: 10px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
-/* Header and navigation */
+/* Header */
+
 header {
-    background-color: #2f6f4e;
-    color: white;
-    padding: 20px;
+background-color: #689f38;
+color: white;
+padding: 20px 40px;
 }
 
-header h1 {
-    margin: 0 0 15px;
-}
+/* Navigation */
 
 nav a {
-    color: white;
-    text-decoration: none;
-    margin-right: 20px;
+color: white;
+text-decoration: none;
+margin-right: 20px;
+font-weight: bold;
+transition: 0.3s;
 }
 
 nav a:hover {
-    text-decoration: underline;
+color: black;
 }
 
 /* Forms */
-form {
-    margin: 20px 0;
-}
 
 label {
-    display: inline-block;
-    margin: 8px 5px 8px 0;
+display: block;
+margin-bottom: 6px;
+font-weight: bold;
 }
 
 input,
-select {
-    padding: 8px;
-    margin-right: 10px;
+select,
+textarea {
+width: 100%;
+padding: 10px;
+margin-bottom: 18px;
+border: 1px solid black;
+border-radius: 6px;
+box-sizing: border-box;
 }
 
+input:focus,
+select:focus,
+textarea:focus {
+outline: none;
+border-color: #00441b;
+box-shadow: 0 0 5px rgba(47,111,78,.3);
+}
+
+/* Buttons */
+
 button {
-    padding: 8px 14px;
-    cursor: pointer;
+background-color: #00441b;
+color: white;
+border: none;
+padding: 10px 18px;
+border-radius: 6px;
+cursor: pointer;
+transition: .3s;
+}
+
+button:hover {
+background-color: #dcedc8;
 }
 
 /* Tables */
+
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+width: 100%;
+border-collapse: collapse;
+table-layout: fixed;
+margin-top: 20px;
 }
 
 th,
 td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
+padding: 14px;
+border-bottom: 1px solid black;
+vertical-align: middle;
+border: 1px solid black;
 }
 
 th {
-    background-color: #e3eee8;
+background-color: #c5e1a5;
+color: white;
+text-align: center;
 }
 
-/* Validation errors */
-.error {
-    color: #b00020;
-    font-size: 14px;
+td {
+text-align: center;
+background-color: white;
 }
 
-/* Footer */
+/* First Column (Exercise) */
+th:first-child,
+td:first-child {
+text-align: left;
+width: 30%;
+}
+
+/* Sets */
+th:nth-child(2),
+td:nth-child(2) {
+width: 12%;
+}
+
+/* Reps */
+th:nth-child(3),
+td:nth-child(3) {
+width: 12%;
+}
+
+/* Target Minutes */
+th:nth-child(4),
+td:nth-child(4) {
+width: 18%;
+}
+
+/* Actions */
+th:last-child,
+td:last-child {
+width: 28%;
+text-align: center;
+}
+
+tr:nth-child(even) {
+background: #dcedc8;
+}
+
+/* Action Button */
+
+.btn{
+display:inline-block;
+padding:8px 14px;
+border-radius:5px;
+color:white;
+text-decoration:none;
+}
+
+.btn-view{
+background:#689f38;
+}
+
+.btn-view:hover{
+background:#9CCC65;
+}
+
+.btn-add{
+background:#689f38;
+}
+
+.btn-add:hover{
+background:#9CCC65;
+}
+
+.btn-edit{
+background:#689f38;
+}
+
+.btn-edit:hover{
+background:#9CCC65;
+}
+
+.btn-delete{
+background:#33691e;
+color: white;
+}
+
+.btn-delete:hover{
+background:#9CCC65;
+}
+
+/* Form Buttons */
+
+.form-actions {
+display: flex;
+gap: 15px;
+margin-top: 25px;
+}
+
+.form-actions .btn,
+.form-actions button {
+width: 140px;
+height: 44px;
+display: inline-flex;
+justify-content: center;
+align-items: center;
+box-sizing: border-box;
+font-size: 16px;
+font-weight: 600;
+border-radius: 8px;
+text-decoration: none;
+cursor: pointer;
+padding: 0;
+}
+
+.btn-save {
+background: #689F38;
+color: white;
+}
+
+.btn-save:hover {
+background: #558B2F;
+}
+
+.btn-cancel {
+background:#689F38;
+color: white;
+}
+
+.btn-cancel:hover {
+background: #558B2F;
+}
+
+/* Footer*/
+
 footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    color: #666;
+text-align: center;
+padding: 20px;
+background: #558B2F;
+color: white;
+border-top: 1px solid #ddd;
 }

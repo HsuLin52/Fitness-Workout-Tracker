@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Workout Plan Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <h2>Workout Plan Details</h2>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <td th:text="${workoutPlan.id}"></td>
+        </tr>
+
+        <tr>
+            <th>User</th>
+            <td th:text="${workoutPlan.user.name}"></td>
+        </tr>
+
+        <tr>
+            <th>Plan Name</th>
+            <td th:text="${workoutPlan.name}"></td>
+        </tr>
+
+        <tr>
+            <th>Description</th>
+            <td th:text="${workoutPlan.description}"></td>
+        </tr>
+
+        <tr>
+            <th>Goal</th>
+            <td th:text="${workoutPlan.goal}"></td>
+        </tr>
+
+        <tr>
+            <th>Created Date</th>
+            <td th:text="${workoutPlan.createdDate}"></td>
+        </tr>
+
+    </table>
+
+    <br>
+
+    <!-- Edit Plan button -->
+    <a class="btn btn-edit"
+       th:href="@{/plans/edit/{id}(id=${workoutPlan.id})}">
+        Edit Plan
+    </a>
+
+    <br><br><br>
+
+    <h3>Exercises</h3>
+
+    <table>
+
+        <tr>
+            <th>Exercise</th>
+            <th>Sets</th>
+            <th>Reps</th>
+            <th>Target Minutes</th>
+            <th>Actions</th>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(items)}">
+            <td colspan="5">No exercises added to this workout plan.</td>
+        </tr>
+
+        <tr th:each="item : ${items}">
+
+            <td th:text="${item.exercise.name}"></td>
+
+            <td th:text="${item.sets}"></td>
+
+            <td th:text="${item.reps}"></td>
+
+            <td th:text="${item.targetMinutes}"></td>
+
+            <td>
+
+                <a class="btn btn-edit"
+                   th:href="@{/plans/{planId}/items/edit/{itemId}
+                   (planId=${workoutPlan.id},itemId=${item.id})}">
+                    Edit
+                </a>
+
+                <a class="btn btn-delete"
+                   th:href="@{/plans/{planId}/items/delete/{itemId}
+                   (planId=${workoutPlan.id},itemId=${item.id})}"
+                   onclick="return confirm('Are you sure you want to delete this exercise?')">
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+    </table>
+
+    <br>
+
+    <!-- Add Exercise button -->
+    <a class="btn btn-add"
+       th:href="@{/plans/{planId}/items/add(planId=${workoutPlan.id})}">
+        Add Exercise
+    </a>
+
+    <br><br>
+
+    <!-- Back button -->
+    <a class="btn"
+       th:href="@{/plans}">
+        Back to List
+    </a>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Workout Plan Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <h2 th:text="${workoutPlan.id == null ? 'Add Workout Plan' : 'Edit Workout Plan'}"></h2>
+
+    <form th:object="${workoutPlan}"
+          th:action="${workoutPlan.id == null} ? @{/plans/add} : @{/plans/edit}"
+          method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <label>User:</label><br>
+
+        <select name="userId" required>
+
+            <option value="">Select User</option>
+
+            <option
+                    th:each="user : ${users}"
+                    th:value="${user.id}"
+                    th:text="${user.name}"
+                    th:selected="${workoutPlan.user != null and workoutPlan.user.id == user.id}">
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label>Plan Name:</label><br>
+
+        <input type="text" th:field="*{name}">
+
+        <br>
+
+        <span
+                th:if="${#fields.hasErrors('name')}"
+                th:errors="*{name}">
+        </span>
+
+        <br><br>
+
+        <label>Description:</label><br>
+
+        <textarea
+                th:field="*{description}"
+                rows="4"
+                cols="50">
+        </textarea>
+
+        <br><br>
+
+        <label>Goal:</label><br>
+
+        <input type="text" th:field="*{goal}">
+
+        <br>
+
+        <span
+                th:if="${#fields.hasErrors('goal')}"
+                th:errors="*{goal}">
+        </span>
+
+        <br><br>
+
+        <div class="form-actions">
+
+            <button type="submit" class="btn btn-save">
+                Save
+            </button>
+
+            <a th:href="@{/plans}" class="btn btn-cancel">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

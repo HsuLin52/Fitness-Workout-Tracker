@@ -87,6 +87,11 @@
 
             <td>
 
+                <a class="btn btn-view"
+                   th:href="@{/workouts/add(itemId=${item.id})}">
+                    Record Workout
+                </a>
+
                 <a class="btn btn-edit"
                    th:href="@{/plans/{planId}/items/edit/{itemId}
                    (planId=${workoutPlan.id},itemId=${item.id})}">

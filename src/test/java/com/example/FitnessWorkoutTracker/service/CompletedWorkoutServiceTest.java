@@ -3,6 +3,7 @@ package com.example.FitnessWorkoutTracker.service;
 import com.example.FitnessWorkoutTracker.model.CompletedWorkout;
 import com.example.FitnessWorkoutTracker.model.Exercise;
 import com.example.FitnessWorkoutTracker.model.ExerciseType;
+import com.example.FitnessWorkoutTracker.repository.CompletedWorkoutRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -10,21 +11,31 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-// Tests the calorie calculation formula and the validation rules on CompletedWorkout
+// Tests saving, editing, deleting, and the calorie calculation/validation rules on CompletedWorkout
+@ExtendWith(MockitoExtension.class)
 class CompletedWorkoutServiceTest {
 
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
 
-    private final CompletedWorkoutService completedWorkoutService = new CompletedWorkoutService(null);
+    @Mock
+    private CompletedWorkoutRepository completedWorkoutRepository;
 
     @BeforeAll
     static void setUpValidator() {
@@ -56,26 +67,86 @@ class CompletedWorkoutServiceTest {
     // Calories Burned = Exercise Calories per Minute x Completed Duration in Minutes
     @Test
     void calculateCaloriesMultipliesRateByDuration() {
-        double calories = completedWorkoutService.calculateCalories(exercise(8.0), 45);
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+        double calories = service.calculateCalories(exercise(8.0), 45);
         assertEquals(360.0, calories);
     }
 
     @Test
     void calculateCaloriesReturnsZeroWhenExerciseIsNull() {
-        double calories = completedWorkoutService.calculateCalories(null, 30);
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+        double calories = service.calculateCalories(null, 30);
         assertEquals(0.0, calories);
     }
 
     @Test
     void calculateCaloriesReturnsZeroWhenDurationIsNull() {
-        double calories = completedWorkoutService.calculateCalories(exercise(8.0), null);
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+        double calories = service.calculateCalories(exercise(8.0), null);
         assertEquals(0.0, calories);
     }
 
     @Test
-    void calculateCaloriesHandlesZeroDuration() {
-        double calories = completedWorkoutService.calculateCalories(exercise(8.0), 0);
-        assertEquals(0.0, calories);
+    void saveWorkoutCalculatesAndPersistsCalories() {
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+
+        CompletedWorkout workout = validWorkout();
+        workout.setExercise(exercise(8.0));
+        workout.setDuration(45);
+
+        when(completedWorkoutRepository.save(any(CompletedWorkout.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        CompletedWorkout saved = service.saveWorkout(workout);
+
+        ArgumentCaptor<CompletedWorkout> captor = ArgumentCaptor.forClass(CompletedWorkout.class);
+        verify(completedWorkoutRepository).save(captor.capture());
+
+        assertEquals(360.0, captor.getValue().getCalories());
+        assertEquals(360.0, saved.getCalories());
+    }
+
+    @Test
+    void savingAnEditedWorkoutRecalculatesCaloriesFromTheNewExerciseAndDuration() {
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+
+        // Simulate an existing workout being edited: exercise and duration both change
+        CompletedWorkout workout = validWorkout();
+        workout.setId(7);
+        workout.setExercise(exercise(5.0));
+        workout.setDuration(20);
+        workout.setCalories(100.0); // stale value from before the edit
+
+        when(completedWorkoutRepository.save(any(CompletedWorkout.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        CompletedWorkout saved = service.saveWorkout(workout);
+
+        assertEquals(100.0, saved.getCalories());
+        assertEquals(7, saved.getId());
+    }
+
+    @Test
+    void deleteWorkoutDelegatesToRepository() {
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+
+        service.deleteWorkout(3);
+
+        verify(completedWorkoutRepository).deleteById(3);
+    }
+
+    @Test
+    void getWorkoutByIdReturnsRepositoryResult() {
+        CompletedWorkoutService service = new CompletedWorkoutService(completedWorkoutRepository);
+        CompletedWorkout workout = validWorkout();
+        workout.setId(9);
+
+        when(completedWorkoutRepository.findById(9)).thenReturn(Optional.of(workout));
+
+        Optional<CompletedWorkout> found = service.getWorkoutById(9);
+
+        assertTrue(found.isPresent());
+        assertEquals(9, found.get().getId());
     }
 
     @Test
@@ -88,6 +159,16 @@ class CompletedWorkoutServiceTest {
     void negativeDurationIsRejected() {
         CompletedWorkout workout = validWorkout();
         workout.setDuration(-5);
+
+        Set<ConstraintViolation<CompletedWorkout>> violations = validator.validate(workout);
+
+        assertFalse(violations.isEmpty());
+    }
+
+    @Test
+    void zeroDurationIsRejected() {
+        CompletedWorkout workout = validWorkout();
+        workout.setDuration(0);
 
         Set<ConstraintViolation<CompletedWorkout>> violations = validator.validate(workout);
 

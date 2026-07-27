@@ -36,7 +36,7 @@ public class CompletedWorkout {
     private LocalDate workoutDate;
 
     @NotNull(message = "Duration is required")
-    @Min(value = 0, message = "Duration cannot be negative")
+    @Min(value = 1, message = "Duration must be at least 1 minute")
     private Integer duration;
 
     @Min(value = 0, message = "Sets cannot be negative")

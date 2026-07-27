@@ -19,6 +19,8 @@
         Completed Workout
     </h2>
 
+    <p th:if="${formError}" th:text="${formError}" style="color:#b71c1c; font-weight:bold;"></p>
+
     <form th:object="${completedWorkout}"
           th:action="${isEdit} ? @{/workouts/edit} : @{/workouts/add}"
           method="post">
@@ -88,7 +90,7 @@
 
         <label>Duration (minutes):</label><br>
 
-        <input type="number" th:field="*{duration}" min="0" required>
+        <input type="number" th:field="*{duration}" min="1" required>
 
         <br>
 

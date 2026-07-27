@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Completed Workout Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <h2>Completed Workout Details</h2>
+
+    <p th:if="${successMessage}" th:text="${successMessage}" style="color:#33691e; font-weight:bold;"></p>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <td th:text="${completedWorkout.id}"></td>
+        </tr>
+
+        <tr>
+            <th>User</th>
+            <td th:text="${completedWorkout.user.name}"></td>
+        </tr>
+
+        <tr>
+            <th>Workout Plan</th>
+            <td th:text="${completedWorkout.workoutPlan != null ? completedWorkout.workoutPlan.name : 'Not linked to a plan'}"></td>
+        </tr>
+
+        <tr>
+            <th>Exercise</th>
+            <td th:text="${completedWorkout.exercise.name}"></td>
+        </tr>
+
+        <tr>
+            <th>Date</th>
+            <td th:text="${completedWorkout.workoutDate}"></td>
+        </tr>
+
+        <tr>
+            <th>Duration (minutes)</th>
+            <td th:text="${completedWorkout.duration}"></td>
+        </tr>
+
+        <tr>
+            <th>Sets</th>
+            <td th:text="${completedWorkout.sets}"></td>
+        </tr>
+
+        <tr>
+            <th>Reps</th>
+            <td th:text="${completedWorkout.reps}"></td>
+        </tr>
+
+        <tr>
+            <th>Calories Burned</th>
+            <td th:text="${completedWorkout.calories} + ' (calculated as exercise calories/min x duration)'"></td>
+        </tr>
+
+        <tr>
+            <th>Notes</th>
+            <td th:text="${completedWorkout.notes}"></td>
+        </tr>
+
+        <tr>
+            <th>Completed</th>
+            <td th:text="${completedWorkout.completed} ? 'Yes' : 'No'"></td>
+        </tr>
+
+    </table>
+
+    <br>
+
+    <a class="btn btn-edit"
+       th:href="@{/workouts/edit/{id}(id=${completedWorkout.id})}">
+        Edit Workout
+    </a>
+
+    <a class="btn btn-delete"
+       th:href="@{/workouts/delete/{id}(id=${completedWorkout.id})}"
+       onclick="return confirm('Are you sure you want to delete this completed workout?')">
+        Delete Workout
+    </a>
+
+    <br><br>
+
+    <a class="btn" th:href="@{/workouts}">
+        Back to List
+    </a>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

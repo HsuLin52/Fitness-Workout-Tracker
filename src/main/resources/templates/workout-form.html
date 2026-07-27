@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isEdit} ? 'Edit Completed Workout' : 'Record Completed Workout'">
+        Completed Workout
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <h2 th:text="${isEdit} ? 'Edit Completed Workout' : 'Record Completed Workout'">
+        Completed Workout
+    </h2>
+
+    <form th:object="${completedWorkout}"
+          th:action="${isEdit} ? @{/workouts/edit} : @{/workouts/add}"
+          method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <label>User:</label><br>
+
+        <select name="userId" required>
+
+            <option value="">Select User</option>
+
+            <option
+                    th:each="user : ${users}"
+                    th:value="${user.id}"
+                    th:text="${user.name}"
+                    th:selected="${completedWorkout.user != null and completedWorkout.user.id == user.id}">
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label>Exercise:</label><br>
+
+        <select name="exerciseId" required>
+
+            <option value="">Select Exercise</option>
+
+            <option
+                    th:each="exercise : ${exercises}"
+                    th:value="${exercise.id}"
+                    th:text="${exercise.name}"
+                    th:selected="${completedWorkout.exercise != null and completedWorkout.exercise.id == exercise.id}">
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label>Workout Plan (optional):</label><br>
+
+        <select name="planId">
+
+            <option value="">Not linked to a plan</option>
+
+            <option
+                    th:each="plan : ${plans}"
+                    th:value="${plan.id}"
+                    th:text="${plan.name}"
+                    th:selected="${completedWorkout.workoutPlan != null and completedWorkout.workoutPlan.id == plan.id}">
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label>Workout Date:</label><br>
+
+        <input type="date" th:field="*{workoutDate}" required>
+
+        <br>
+
+        <span th:if="${#fields.hasErrors('workoutDate')}" th:errors="*{workoutDate}"></span>
+
+        <br><br>
+
+        <label>Duration (minutes):</label><br>
+
+        <input type="number" th:field="*{duration}" min="0" required>
+
+        <br>
+
+        <span th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}"></span>
+
+        <br><br>
+
+        <label>Sets (optional):</label><br>
+
+        <input type="number" th:field="*{sets}" min="0">
+
+        <br>
+
+        <span th:if="${#fields.hasErrors('sets')}" th:errors="*{sets}"></span>
+
+        <br><br>
+
+        <label>Reps (optional):</label><br>
+
+        <input type="number" th:field="*{reps}" min="0">
+
+        <br>
+
+        <span th:if="${#fields.hasErrors('reps')}" th:errors="*{reps}"></span>
+
+        <br><br>
+
+        <label>Notes (optional):</label><br>
+
+        <textarea th:field="*{notes}" rows="4" cols="50"></textarea>
+
+        <br>
+
+        <span th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></span>
+
+        <br><br>
+
+        <label>
+            <input type="checkbox" th:field="*{completed}" style="width:auto; display:inline-block;">
+            Fully completed as planned
+        </label>
+
+        <br><br>
+
+        <div class="form-actions">
+
+            <button type="submit"
+                    class="btn btn-save"
+                    th:text="${isEdit} ? 'Update Workout' : 'Save Workout'">
+            </button>
+
+            <a th:href="@{/workouts}" class="btn btn-cancel">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

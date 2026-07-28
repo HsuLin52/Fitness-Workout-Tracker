@@ -17,7 +17,7 @@
 
   <br>
 
-  <a th:href="@{/plans/new}" class="btn btn-add">
+  <a th:href="@{/plans/add}" class="btn btn-add">
     Add Workout Plan
   </a>
 
@@ -37,7 +37,8 @@
       <th>ID</th>
       <th>Name</th>
       <th>Goal</th>
-      <th>Created Date</th>
+      <th>Scheduled Day</th>
+      <th style="width: 130px;">Created Date</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -51,6 +52,8 @@
       <td th:text="${plan.name}"></td>
 
       <td th:text="${plan.goal}"></td>
+
+      <td th:text="${plan.scheduledDay != null ? plan.scheduledDay : 'Not scheduled'}"></td>
 
       <td th:text="${plan.createdDate}"></td>
 

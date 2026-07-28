@@ -1,5 +1,7 @@
 package com.example.FitnessWorkoutTracker.model;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @Table(name = "workout_plan")
@@ -29,6 +32,9 @@ public class WorkoutPlan {
 
     @Size(max = 100, message = "Goal cannot exceed 100 characters")
     private String goal;
+
+    @Enumerated(EnumType.STRING)
+    private ScheduledDay scheduledDay;
 
     private LocalDate createdDate;
 
@@ -95,5 +101,13 @@ public class WorkoutPlan {
 
     public void setItems(List<WorkoutPlanItem> items) {
         this.items = items;
+    }
+
+    public ScheduledDay getScheduledDay() {
+        return scheduledDay;
+    }
+
+    public void setScheduledDay(ScheduledDay scheduledDay) {
+        this.scheduledDay = scheduledDay;
     }
 }

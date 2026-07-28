@@ -70,7 +70,21 @@
         <span
                 th:if="${#fields.hasErrors('goal')}"
                 th:errors="*{goal}">
-        </span>
+</span>
+
+        <br><br>
+
+        <label>Scheduled Day:</label><br>
+
+        <select th:field="*{scheduledDay}">
+            <option value="">Select a day (Optional)</option>
+
+            <option
+                    th:each="day : ${scheduledDays}"
+                    th:value="${day.name()}"
+                    th:text="${day}">
+            </option>
+        </select>
 
         <br><br>
 

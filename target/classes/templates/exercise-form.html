@@ -97,13 +97,17 @@
 
           <br>
 
-          <button type="submit">
-              Save Exercise
-          </button>
+            <div class="form-actions">
 
-          <a th:href="@{/exercises}">
-              Cancel
-          </a>
+                <button type="submit" class="btn btn-save">
+                    Save Exercise
+                </button>
+
+                <a th:href="@{/exercises}" class="btn btn-cancel">
+                    Cancel
+                </a>
+
+            </div>
 
         </form>
 

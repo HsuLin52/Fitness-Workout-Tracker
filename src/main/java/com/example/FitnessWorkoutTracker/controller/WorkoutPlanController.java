@@ -1,5 +1,6 @@
 package com.example.FitnessWorkoutTracker.controller;
 
+import com.example.FitnessWorkoutTracker.model.ScheduledDay;
 import com.example.FitnessWorkoutTracker.model.User;
 import com.example.FitnessWorkoutTracker.model.WorkoutPlan;
 import com.example.FitnessWorkoutTracker.repository.UserRepository;
@@ -39,6 +40,7 @@ public class WorkoutPlanController {
     public String showAddForm(Model model) {
         model.addAttribute("workoutPlan", new WorkoutPlan());
         model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("scheduledDays", ScheduledDay.values());
         return "plan-form";
     }
 
@@ -52,6 +54,7 @@ public class WorkoutPlanController {
 
         if (result.hasErrors()) {
             model.addAttribute("users", userRepository.findAll());
+            model.addAttribute("scheduledDays", ScheduledDay.values());
             return "plan-form";
         }
 
@@ -105,6 +108,7 @@ public class WorkoutPlanController {
 
         model.addAttribute("workoutPlan", workoutPlan);
         model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("scheduledDays", ScheduledDay.values());
 
         return "plan-form";
     }
@@ -119,6 +123,7 @@ public class WorkoutPlanController {
 
         if (result.hasErrors()) {
             model.addAttribute("users", userRepository.findAll());
+            model.addAttribute("scheduledDays", ScheduledDay.values());
             return "plan-form";
         }
 
@@ -126,9 +131,18 @@ public class WorkoutPlanController {
                 .orElseThrow(() ->
                         new IllegalArgumentException("User not found"));
 
-        workoutPlan.setUser(user);
+        WorkoutPlan existingPlan = workoutPlanService
+                .getPlanById(workoutPlan.getId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Workout plan not found"));
 
-        workoutPlanService.savePlan(workoutPlan);
+        existingPlan.setName(workoutPlan.getName());
+        existingPlan.setDescription(workoutPlan.getDescription());
+        existingPlan.setGoal(workoutPlan.getGoal());
+        existingPlan.setUser(user);
+        existingPlan.setScheduledDay(workoutPlan.getScheduledDay());
+
+        workoutPlanService.savePlan(existingPlan);
 
         return "redirect:/plans";
     }

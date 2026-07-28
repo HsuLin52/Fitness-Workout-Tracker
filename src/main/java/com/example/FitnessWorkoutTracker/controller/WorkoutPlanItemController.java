@@ -105,6 +105,10 @@ public class WorkoutPlanItemController {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Workout plan item not found"));
 
+        if (!item.getWorkoutPlan().getId().equals(planId)) {
+            throw new IllegalArgumentException("Workout plan item does not belong to this workout plan");
+        }
+
         model.addAttribute("plan", plan);
         model.addAttribute("workoutPlanItem", item);
         model.addAttribute("exercises", exerciseRepository.findAll());
@@ -127,9 +131,19 @@ public class WorkoutPlanItemController {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Workout plan not found"));
 
+        WorkoutPlanItem existingItem = workoutPlanItemService
+                .getItemById(workoutPlanItem.getId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Workout plan item not found"));
+
+        if (!existingItem.getWorkoutPlan().getId().equals(planId)) {
+            throw new IllegalArgumentException("Workout plan item does not belong to this workout plan");
+        }
+
         if (result.hasErrors()) {
 
             model.addAttribute("plan", plan);
+            model.addAttribute("workoutPlanItem", workoutPlanItem);
             model.addAttribute("exercises", exerciseRepository.findAll());
             model.addAttribute("isEdit", true);
 
@@ -141,10 +155,12 @@ public class WorkoutPlanItemController {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Exercise not found"));
 
-        workoutPlanItem.setWorkoutPlan(plan);
-        workoutPlanItem.setExercise(exercise);
+        existingItem.setExercise(exercise);
+        existingItem.setSets(workoutPlanItem.getSets());
+        existingItem.setReps(workoutPlanItem.getReps());
+        existingItem.setTargetMinutes(workoutPlanItem.getTargetMinutes());
 
-        workoutPlanItemService.saveItem(workoutPlanItem);
+        workoutPlanItemService.saveItem(existingItem);
 
         return "redirect:/plans/" + planId;
     }
@@ -154,6 +170,15 @@ public class WorkoutPlanItemController {
             @PathVariable Integer planId,
             @PathVariable Integer itemId
     ) {
+
+        WorkoutPlanItem item = workoutPlanItemService
+                .getItemById(itemId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Workout plan item not found"));
+
+        if (!item.getWorkoutPlan().getId().equals(planId)) {
+            throw new IllegalArgumentException("Workout plan item does not belong to this workout plan");
+        }
 
         workoutPlanItemService.deleteItem(itemId);
 

@@ -77,7 +77,7 @@ box-shadow: 0 0 5px rgba(47,111,78,.3);
 /* Buttons */
 
 button {
-background-color: #00441b;
+background-color: #689f38;
 color: white;
 border: none;
 padding: 10px 18px;
@@ -87,7 +87,7 @@ transition: .3s;
 }
 
 button:hover {
-background-color: #dcedc8;
+background-color: #9CCC65;
 }
 
 /* Tables */
@@ -197,6 +197,29 @@ color: white;
 background:#9CCC65;
 }
 
+.btn-add {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+
+background: #9CCC65;
+color: white;
+
+border: none;
+border-radius: 10px;
+
+text-decoration: none;
+font-size: 18px;
+font-weight: 600;
+
+cursor: pointer;
+transition: 0.3s;
+}
+
+.btn-add:hover {
+background: #33691e;
+}
+
 /* Form Buttons */
 
 .form-actions {
@@ -207,7 +230,8 @@ margin-top: 25px;
 
 .form-actions .btn,
 .form-actions button {
-width: 140px;
+min-width: 180px;
+    padding: 10px 18px;
 height: 44px;
 display: inline-flex;
 justify-content: center;
@@ -218,7 +242,6 @@ font-weight: 600;
 border-radius: 8px;
 text-decoration: none;
 cursor: pointer;
-padding: 0;
 }
 
 .btn-save {

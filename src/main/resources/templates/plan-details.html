@@ -98,12 +98,17 @@
                     Edit
                 </a>
 
-                <a class="btn btn-delete"
-                   th:href="@{/plans/{planId}/items/delete/{itemId}
-                   (planId=${workoutPlan.id},itemId=${item.id})}"
-                   onclick="return confirm('Are you sure you want to delete this exercise?')">
-                    Delete
-                </a>
+                <form th:action="@{/plans/{planId}/items/delete/{itemId}
+                      (planId=${workoutPlan.id}, itemId=${item.id})}"
+                      method="post"
+                      style="display:inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this exercise?');">
+
+                    <button type="submit" class="btn btn-delete">
+                        Delete
+                    </button>
+
+                </form>
 
             </td>
 

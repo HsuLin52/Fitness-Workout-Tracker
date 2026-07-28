@@ -165,7 +165,7 @@ public class WorkoutPlanItemController {
         return "redirect:/plans/" + planId;
     }
 
-    @GetMapping("/delete/{itemId}")
+    @PostMapping("/delete/{itemId}")
     public String deleteItem(
             @PathVariable Integer planId,
             @PathVariable Integer itemId

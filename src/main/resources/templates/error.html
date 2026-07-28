@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <h2>Oops!</h2>
+
+    <p th:text="${errorMessage}">
+        Something went wrong.
+    </p>
+
+    <br>
+
+    <a th:href="@{/}" class="btn btn-view">
+        Back to Home
+    </a>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

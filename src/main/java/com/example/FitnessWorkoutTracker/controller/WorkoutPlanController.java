@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import com.example.FitnessWorkoutTracker.repository.CompletedWorkoutRepository;
 
 @Controller
 @RequestMapping("/plans")
@@ -19,15 +20,18 @@ public class WorkoutPlanController {
     private final WorkoutPlanService workoutPlanService;
     private final WorkoutPlanItemService workoutPlanItemService;
     private final UserRepository userRepository;
+    private final CompletedWorkoutRepository completedWorkoutRepository;
 
     public WorkoutPlanController(
             WorkoutPlanService workoutPlanService,
             WorkoutPlanItemService workoutPlanItemService,
-            UserRepository userRepository
+            UserRepository userRepository,
+            CompletedWorkoutRepository completedWorkoutRepository
     ) {
         this.workoutPlanService = workoutPlanService;
         this.workoutPlanItemService = workoutPlanItemService;
         this.userRepository = userRepository;
+        this.completedWorkoutRepository = completedWorkoutRepository;
     }
 
     @GetMapping
@@ -147,7 +151,7 @@ public class WorkoutPlanController {
         return "redirect:/plans";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deletePlan(@PathVariable Integer id) {
 
         if (workoutPlanService.getPlanById(id).isEmpty()) {

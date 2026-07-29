@@ -5,12 +5,14 @@ import com.example.FitnessWorkoutTracker.model.Exercise;
 import com.example.FitnessWorkoutTracker.model.User;
 import com.example.FitnessWorkoutTracker.model.WorkoutPlan;
 import com.example.FitnessWorkoutTracker.model.WorkoutPlanItem;
+import com.example.FitnessWorkoutTracker.exception.WorkoutNotFoundException;
 import com.example.FitnessWorkoutTracker.repository.ExerciseRepository;
 import com.example.FitnessWorkoutTracker.repository.UserRepository;
 import com.example.FitnessWorkoutTracker.service.CompletedWorkoutService;
 import com.example.FitnessWorkoutTracker.service.WorkoutPlanItemService;
 import com.example.FitnessWorkoutTracker.service.WorkoutPlanService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -66,7 +68,7 @@ public class CompletedWorkoutController {
             WorkoutPlanItem item = workoutPlanItemService
                     .getItemById(itemId)
                     .orElseThrow(() ->
-                            new IllegalArgumentException("Workout plan item not found with ID: " + itemId));
+                            new WorkoutNotFoundException("Workout plan item not found with ID: " + itemId));
 
             completedWorkout.setWorkoutPlan(item.getWorkoutPlan());
             completedWorkout.setExercise(item.getExercise());
@@ -80,7 +82,7 @@ public class CompletedWorkoutController {
                 WorkoutPlan plan = workoutPlanService
                         .getPlanById(planId)
                         .orElseThrow(() ->
-                                new IllegalArgumentException("Workout plan not found with ID: " + planId));
+                                new WorkoutNotFoundException("Workout plan not found with ID: " + planId));
                 completedWorkout.setWorkoutPlan(plan);
                 completedWorkout.setUser(plan.getUser());
             }
@@ -89,7 +91,7 @@ public class CompletedWorkoutController {
                 Exercise exercise = exerciseRepository
                         .findById(exerciseId)
                         .orElseThrow(() ->
-                                new IllegalArgumentException("Exercise not found with ID: " + exerciseId));
+                                new WorkoutNotFoundException("Exercise not found with ID: " + exerciseId));
                 completedWorkout.setExercise(exercise);
             }
         }
@@ -154,7 +156,7 @@ public class CompletedWorkoutController {
         CompletedWorkout completedWorkout = completedWorkoutService
                 .getWorkoutById(id)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Completed workout not found with ID: " + id));
+                        new WorkoutNotFoundException("Completed workout not found with ID: " + id));
 
         model.addAttribute("completedWorkout", completedWorkout);
 
@@ -171,7 +173,7 @@ public class CompletedWorkoutController {
         CompletedWorkout completedWorkout = completedWorkoutService
                 .getWorkoutById(id)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Completed workout not found with ID: " + id));
+                        new WorkoutNotFoundException("Completed workout not found with ID: " + id));
 
         model.addAttribute("completedWorkout", completedWorkout);
         model.addAttribute("users", userRepository.findAll());
@@ -232,17 +234,27 @@ public class CompletedWorkoutController {
         return "redirect:/workouts/" + saved.getId();
     }
 
-    // Deletes a completed workout by ID
-    @GetMapping("/delete/{id}")
+    // Deletes a completed workout by ID. Uses POST since this mutates data and should not be
+    // triggerable by a plain link/prefetch the way a GET request is.
+    @PostMapping("/delete/{id}")
     public String deleteWorkout(@PathVariable Integer id) {
 
         if (completedWorkoutService.getWorkoutById(id).isEmpty()) {
-            throw new IllegalArgumentException("Completed workout not found with ID: " + id);
+            throw new WorkoutNotFoundException("Completed workout not found with ID: " + id);
         }
 
         completedWorkoutService.deleteWorkout(id);
 
         return "redirect:/workouts";
+    }
+
+    // Shows a friendly page instead of a stack trace when a workout, plan, plan item, or
+    // exercise referenced by a /workouts URL can't be found (e.g. a stale or mistyped link).
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(WorkoutNotFoundException.class)
+    public String handleWorkoutNotFound(WorkoutNotFoundException ex, Model model) {
+        model.addAttribute("message", ex.getMessage());
+        return "workout-not-found";
     }
 
     // Resolves the user, exercise, and optional plan for a submitted form, enforcing that

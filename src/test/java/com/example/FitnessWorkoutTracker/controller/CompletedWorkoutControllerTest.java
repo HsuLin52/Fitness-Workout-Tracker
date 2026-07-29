@@ -21,9 +21,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -223,13 +220,13 @@ class CompletedWorkoutControllerTest {
     }
 
     @Test
-    void viewWorkoutNotFoundThrowsIllegalArgumentException() {
+    void viewWorkoutNotFoundShowsFriendlyNotFoundPage() throws Exception {
         when(completedWorkoutService.getWorkoutById(999)).thenReturn(Optional.empty());
 
-        Exception thrown = assertThrows(Exception.class, () -> mockMvc.perform(get("/workouts/999")));
-
-        assertInstanceOf(IllegalArgumentException.class, thrown.getCause());
-        assertTrue(thrown.getCause().getMessage().contains("not found"));
+        mockMvc.perform(get("/workouts/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("workout-not-found"))
+                .andExpect(model().attribute("message", "Completed workout not found with ID: 999"));
     }
 
     @Test
@@ -279,18 +276,18 @@ class CompletedWorkoutControllerTest {
         workout.setId(4);
         when(completedWorkoutService.getWorkoutById(4)).thenReturn(Optional.of(workout));
 
-        mockMvc.perform(get("/workouts/delete/4"))
+        mockMvc.perform(post("/workouts/delete/4"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/workouts"));
     }
 
     @Test
-    void deleteWorkoutNotFoundThrowsIllegalArgumentException() {
+    void deleteWorkoutNotFoundShowsFriendlyNotFoundPage() throws Exception {
         when(completedWorkoutService.getWorkoutById(404)).thenReturn(Optional.empty());
 
-        Exception thrown = assertThrows(Exception.class, () -> mockMvc.perform(get("/workouts/delete/404")));
-
-        assertInstanceOf(IllegalArgumentException.class, thrown.getCause());
-        assertTrue(thrown.getCause().getMessage().contains("not found"));
+        mockMvc.perform(post("/workouts/delete/404"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("workout-not-found"))
+                .andExpect(model().attribute("message", "Completed workout not found with ID: 404"));
     }
 }

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout History</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+    <div class="history-heading">
+        <div>
+            <h2>Workout History</h2>
+            <p>Search and review completed workouts.</p>
+        </div>
+
+        <a th:href="@{/workouts/add}" class="btn btn-add">
+            Record Workout
+        </a>
+    </div>
+
+    <form class="history-filters"
+          method="get"
+          th:action="@{/history}">
+
+        <input type="hidden" name="page" value="0">
+
+        <div class="filter-field filter-wide">
+            <label for="search">Exercise name</label>
+
+            <input id="search"
+                   name="search"
+                   type="search"
+                   placeholder="Example: Running"
+                   th:value="${search}">
+        </div>
+
+        <div class="filter-field">
+            <label for="type">Exercise type</label>
+
+            <select id="type" name="type">
+                <option value="">All types</option>
+
+                <option th:each="exerciseType : ${exerciseTypes}"
+                        th:value="${exerciseType}"
+                        th:text="${exerciseType}"
+                        th:selected="${exerciseType == selectedType}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="startDate">Start date</label>
+
+            <input id="startDate"
+                   name="startDate"
+                   type="date"
+                   th:value="${startDate}">
+        </div>
+
+        <div class="filter-field">
+            <label for="endDate">End date</label>
+
+            <input id="endDate"
+                   name="endDate"
+                   type="date"
+                   th:value="${endDate}">
+        </div>
+
+        <div class="filter-field">
+            <label for="minCalories">Minimum calories</label>
+
+            <input id="minCalories"
+                   name="minCalories"
+                   type="number"
+                   min="0"
+                   step="0.1"
+                   placeholder="0"
+                   th:value="${minCalories}">
+        </div>
+
+        <div class="filter-field">
+            <label for="planId">Workout plan</label>
+
+            <select id="planId" name="planId">
+                <option value="">All plans</option>
+
+                <option th:each="plan : ${plans}"
+                        th:value="${plan.id}"
+                        th:text="${plan.name}"
+                        th:selected="${planId != null and plan.id == planId}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="sortField">Sort by</label>
+
+            <select id="sortField" name="sortField">
+                <option value="workoutDate"
+                        th:selected="${sortField == 'workoutDate'}">
+                    Date
+                </option>
+
+                <option value="exerciseName"
+                        th:selected="${sortField == 'exerciseName'}">
+                    Exercise name
+                </option>
+
+                <option value="duration"
+                        th:selected="${sortField == 'duration'}">
+                    Duration
+                </option>
+
+                <option value="calories"
+                        th:selected="${sortField == 'calories'}">
+                    Calories
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="sortDir">Direction</label>
+
+            <select id="sortDir" name="sortDir">
+                <option value="desc"
+                        th:selected="${sortDir == 'desc'}">
+                    Descending
+                </option>
+
+                <option value="asc"
+                        th:selected="${sortDir == 'asc'}">
+                    Ascending
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="size">Results per page</label>
+
+            <select id="size" name="size">
+                <option value="5" th:selected="${size == 5}">
+                    5
+                </option>
+
+                <option value="10" th:selected="${size == 10}">
+                    10
+                </option>
+
+                <option value="20" th:selected="${size == 20}">
+                    20
+                </option>
+
+                <option value="50" th:selected="${size == 50}">
+                    50
+                </option>
+            </select>
+        </div>
+
+        <div class="history-filter-actions">
+            <button type="submit" class="btn btn-view">
+                Apply Search and Filters
+            </button>
+
+            <a th:href="@{/history}" class="btn btn-cancel">
+                Clear
+            </a>
+        </div>
+    </form>
+
+    <p class="form-error"
+       th:if="${filterError}"
+       th:text="${filterError}">
+    </p>
+
+    <div class="history-summary"
+         th:if="${historyPage.totalElements > 0}">
+
+        <strong th:text="${historyPage.totalElements}"></strong>
+
+        <span th:text="${historyPage.totalElements == 1
+                ? ' completed workout found'
+                : ' completed workouts found'}">
+        </span>
+    </div>
+
+    <div class="empty-state"
+         th:if="${historyPage.totalElements == 0}">
+
+        <h3>No completed workouts found</h3>
+
+        <p>
+            Try clearing a filter, changing your search,
+            or recording a completed workout.
+        </p>
+
+        <a th:href="@{/history}" class="btn btn-view">
+            Clear Search
+        </a>
+    </div>
+
+    <div class="table-scroll"
+         th:if="${historyPage.totalElements > 0}">
+
+        <table class="history-table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Exercise</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Sets / Repetitions</th>
+                <th>Calories</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="workout : ${workouts}">
+                <td th:text="${workout.workoutDate}"></td>
+
+                <td th:text="${workout.exercise.name}"></td>
+
+                <td th:text="${workout.exercise.type}"></td>
+
+                <td th:text="${workout.duration + ' min'}"></td>
+
+                <td>
+                    <span th:if="${workout.sets != null
+                            and workout.reps != null}"
+                          th:text="${workout.sets
+                            + ' sets × '
+                            + workout.reps
+                            + ' reps'}">
+                    </span>
+
+                    <span th:unless="${workout.sets != null
+                            and workout.reps != null}">
+                        —
+                    </span>
+                </td>
+
+                <td th:text="${workout.calories != null
+                        ? #numbers.formatDecimal(
+                            workout.calories,
+                            1,
+                            1
+                          )
+                        : '—'}">
+                </td>
+
+                <td class="actions">
+                    <a class="btn btn-view"
+                       th:href="@{/history/{id}(
+                           id=${workout.id},
+                           page=${historyPage.number},
+                           size=${size},
+                           sortField=${sortField},
+                           sortDir=${sortDir},
+                           search=${search},
+                           type=${selectedType},
+                           startDate=${startDate},
+                           endDate=${endDate},
+                           minCalories=${minCalories},
+                           planId=${planId}
+                       )}">
+                        View
+                    </a>
+
+                    <a class="btn btn-edit"
+                       th:href="@{/workouts/edit/{id}(
+                           id=${workout.id}
+                       )}">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pagination"
+         aria-label="Workout history pages"
+         th:if="${historyPage.totalPages > 1}">
+
+        <a class="page-link"
+           th:if="${historyPage.hasPrevious()}"
+           th:href="@{/history(
+               page=${historyPage.number - 1},
+               size=${size},
+               sortField=${sortField},
+               sortDir=${sortDir},
+               search=${search},
+               type=${selectedType},
+               startDate=${startDate},
+               endDate=${endDate},
+               minCalories=${minCalories},
+               planId=${planId}
+           )}">
+            Previous
+        </a>
+
+        <span class="page-link disabled"
+              th:unless="${historyPage.hasPrevious()}">
+            Previous
+        </span>
+
+        <a class="page-link"
+           th:each="pageNumber : ${pageNumbers}"
+           th:classappend="${pageNumber == historyPage.number}
+                ? ' active'
+                : ''"
+           th:text="${pageNumber + 1}"
+           th:href="@{/history(
+               page=${pageNumber},
+               size=${size},
+               sortField=${sortField},
+               sortDir=${sortDir},
+               search=${search},
+               type=${selectedType},
+               startDate=${startDate},
+               endDate=${endDate},
+               minCalories=${minCalories},
+               planId=${planId}
+           )}">
+        </a>
+
+        <a class="page-link"
+           th:if="${historyPage.hasNext()}"
+           th:href="@{/history(
+               page=${historyPage.number + 1},
+               size=${size},
+               sortField=${sortField},
+               sortDir=${sortDir},
+               search=${search},
+               type=${selectedType},
+               startDate=${startDate},
+               endDate=${endDate},
+               minCalories=${minCalories},
+               planId=${planId}
+           )}">
+            Next
+        </a>
+
+        <span class="page-link disabled"
+              th:unless="${historyPage.hasNext()}">
+            Next
+        </span>
+    </nav>
+
+    <p class="page-status"
+       th:if="${historyPage.totalPages > 0}"
+       th:text="${'Page '
+            + (historyPage.number + 1)
+            + ' of '
+            + historyPage.totalPages}">
+    </p>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

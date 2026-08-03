@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout History Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+    <h2>Completed Workout Details</h2>
+
+    <table class="details-table">
+        <tr>
+            <th>Date</th>
+            <td th:text="${completedWorkout.workoutDate}"></td>
+        </tr>
+
+        <tr>
+            <th>Exercise</th>
+            <td th:text="${completedWorkout.exercise.name}"></td>
+        </tr>
+
+        <tr>
+            <th>Exercise Type</th>
+            <td th:text="${completedWorkout.exercise.type}"></td>
+        </tr>
+
+        <tr>
+            <th>Workout Plan</th>
+            <td th:text="${completedWorkout.workoutPlan != null
+                    ? completedWorkout.workoutPlan.name
+                    : 'Not linked to a plan'}">
+            </td>
+        </tr>
+
+        <tr>
+            <th>Duration</th>
+            <td th:text="${completedWorkout.duration + ' minutes'}"></td>
+        </tr>
+
+        <tr>
+            <th>Sets</th>
+            <td th:text="${completedWorkout.sets != null
+                    ? completedWorkout.sets
+                    : 'Not recorded'}">
+            </td>
+        </tr>
+
+        <tr>
+            <th>Repetitions</th>
+            <td th:text="${completedWorkout.reps != null
+                    ? completedWorkout.reps
+                    : 'Not recorded'}">
+            </td>
+        </tr>
+
+        <tr>
+            <th>Calories Burned</th>
+            <td th:text="${completedWorkout.calories != null
+                    ? #numbers.formatDecimal(
+                        completedWorkout.calories,
+                        1,
+                        1
+                      )
+                    : 'Not recorded'}">
+            </td>
+        </tr>
+
+        <tr>
+            <th>Notes</th>
+            <td th:text="${completedWorkout.notes != null
+                    and not #strings.isEmpty(completedWorkout.notes)
+                    ? completedWorkout.notes
+                    : 'No notes'}">
+            </td>
+        </tr>
+    </table>
+
+    <div class="form-actions">
+        <a class="btn btn-view"
+           th:href="@{/history(
+               page=${page},
+               size=${size},
+               sortField=${sortField},
+               sortDir=${sortDir},
+               search=${search},
+               type=${selectedType},
+               startDate=${startDate},
+               endDate=${endDate},
+               minCalories=${minCalories},
+               planId=${planId}
+           )}">
+            Back to History
+        </a>
+
+        <a class="btn btn-edit"
+           th:href="@{/workouts/edit/{id}(id=${completedWorkout.id})}">
+            Edit Workout
+        </a>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

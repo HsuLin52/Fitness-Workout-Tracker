@@ -220,14 +220,27 @@ class CompletedWorkoutControllerTest {
     }
 
     @Test
-    void viewWorkoutNotFoundShowsFriendlyNotFoundPage() throws Exception {
-        when(completedWorkoutService.getWorkoutById(999)).thenReturn(Optional.empty());
+    void viewWorkoutNotFoundShowsGlobalErrorPage() throws Exception {
+    when(completedWorkoutService.getWorkoutById(999))
+            .thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/workouts/999"))
-                .andExpect(status().isNotFound())
-                .andExpect(view().name("workout-not-found"))
-                .andExpect(model().attribute("message", "Completed workout not found with ID: 999"));
-    }
+    mockMvc.perform(get("/workouts/999"))
+            .andExpect(status().isNotFound())
+            .andExpect(view().name("error"))
+            .andExpect(model().attribute("statusCode", 404))
+            .andExpect(model().attribute(
+                    "errorTitle",
+                    "Record Not Found"
+            ))
+            .andExpect(model().attribute(
+                    "errorMessage",
+                    "Completed workout not found with ID: 999"
+            ))
+            .andExpect(model().attribute(
+                    "requestPath",
+                    "/workouts/999"
+            ));
+}
 
     @Test
     void updateWorkoutForMissingRecordShowsFriendlyError() throws Exception {
@@ -282,12 +295,25 @@ class CompletedWorkoutControllerTest {
     }
 
     @Test
-    void deleteWorkoutNotFoundShowsFriendlyNotFoundPage() throws Exception {
-        when(completedWorkoutService.getWorkoutById(404)).thenReturn(Optional.empty());
+    void deleteWorkoutNotFoundShowsGlobalErrorPage() throws Exception {
+    when(completedWorkoutService.getWorkoutById(404))
+            .thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/workouts/delete/404"))
-                .andExpect(status().isNotFound())
-                .andExpect(view().name("workout-not-found"))
-                .andExpect(model().attribute("message", "Completed workout not found with ID: 404"));
-    }
+    mockMvc.perform(post("/workouts/delete/404"))
+            .andExpect(status().isNotFound())
+            .andExpect(view().name("error"))
+            .andExpect(model().attribute("statusCode", 404))
+            .andExpect(model().attribute(
+                    "errorTitle",
+                    "Record Not Found"
+            ))
+            .andExpect(model().attribute(
+                    "errorMessage",
+                    "Completed workout not found with ID: 404"
+            ))
+            .andExpect(model().attribute(
+                    "requestPath",
+                    "/workouts/delete/404"
+            ));
+}
 }

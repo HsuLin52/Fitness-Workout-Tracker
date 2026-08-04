@@ -1,29 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Error</title>
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${statusCode != null
+            ? statusCode + ' - ' + errorTitle
+            : 'Application Error'}">
+        Application Error
+    </title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
 </head>
 
 <body>
 
 <div th:replace="~{fragments/header :: header}"></div>
 
-<main>
+<main class="error-page">
 
-    <h2>Oops!</h2>
+    <div class="error-icon"
+         aria-hidden="true">
+        !
+    </div>
 
-    <p th:text="${errorMessage}">
-        Something went wrong.
+    <p class="dashboard-card-label"
+       th:if="${statusCode != null}"
+       th:text="${'Error ' + statusCode}">
+        Error
     </p>
 
-    <br>
+    <h2 th:text="${errorTitle != null
+            ? errorTitle
+            : 'Something Went Wrong'}">
+        Something Went Wrong
+    </h2>
 
-    <a th:href="@{/}" class="btn btn-view">
-        Back to Home
-    </a>
+    <div class="error-message">
+
+        <p th:text="${errorMessage != null
+                ? errorMessage
+                : 'The request could not be completed.'}">
+            The request could not be completed.
+        </p>
+
+        <p th:if="${requestPath != null
+                and not #strings.isEmpty(requestPath)}">
+
+            <strong>Requested page:</strong>
+
+            <span th:text="${requestPath}">
+                /requested-page
+            </span>
+        </p>
+
+    </div>
+
+    <div class="form-actions">
+
+        <a class="btn btn-view"
+           th:href="@{/dashboard}">
+            Return to Dashboard
+        </a>
+
+        <a class="btn btn-cancel"
+           href="javascript:history.back()">
+            Go Back
+        </a>
+
+    </div>
 
 </main>
 

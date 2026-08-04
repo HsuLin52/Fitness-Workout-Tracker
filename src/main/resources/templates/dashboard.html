@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Progress Dashboard</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="dashboard-main">
+
+    <!-- Dashboard heading and weekly/monthly switch -->
+    <section class="dashboard-heading">
+        <div>
+            <h2>Progress Dashboard</h2>
+
+            <p>
+                Review your completed workouts and compare
+                your recent progress.
+            </p>
+        </div>
+
+        <div class="dashboard-view-switch"
+             aria-label="Dashboard period">
+
+            <a th:href="@{/dashboard(view='week')}"
+               class="dashboard-view-button"
+               th:classappend="${selectedView == 'week'}
+                    ? ' active'
+                    : ''">
+                Weekly
+            </a>
+
+            <a th:href="@{/dashboard(view='month')}"
+               class="dashboard-view-button"
+               th:classappend="${selectedView == 'month'}
+                    ? ' active'
+                    : ''">
+                Monthly
+            </a>
+        </div>
+    </section>
+
+    <!-- Always-visible weekly and monthly overview -->
+    <section class="dashboard-overview-grid">
+
+        <article class="overview-card">
+            <div>
+                <span class="dashboard-card-label">
+                    Workouts This Week
+                </span>
+
+                <strong th:text="${weeklyStats.completedWorkoutCount}">
+                    0
+                </strong>
+            </div>
+
+            <p>
+                <span th:text="${weeklyStats.totalMinutes}">0</span>
+                total minutes
+            </p>
+        </article>
+
+        <article class="overview-card">
+            <div>
+                <span class="dashboard-card-label">
+                    Calories This Week
+                </span>
+
+                <strong th:text="${#numbers.formatDecimal(
+                        weeklyStats.totalCalories,
+                        1,
+                        1
+                )}">
+                    0.0
+                </strong>
+            </div>
+
+            <p>Estimated calories burned</p>
+        </article>
+
+        <article class="overview-card">
+            <div>
+                <span class="dashboard-card-label">
+                    Workouts This Month
+                </span>
+
+                <strong th:text="${monthlyStats.completedWorkoutCount}">
+                    0
+                </strong>
+            </div>
+
+            <p>
+                <span th:text="${monthlyStats.totalMinutes}">0</span>
+                total minutes
+            </p>
+        </article>
+
+        <article class="overview-card">
+            <div>
+                <span class="dashboard-card-label">
+                    Calories This Month
+                </span>
+
+                <strong th:text="${#numbers.formatDecimal(
+                        monthlyStats.totalCalories,
+                        1,
+                        1
+                )}">
+                    0.0
+                </strong>
+            </div>
+
+            <p>Estimated calories burned</p>
+        </article>
+
+    </section>
+
+    <!-- Selected period -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <h3 th:text="${currentStats.periodLabel}">
+                    This Week
+                </h3>
+
+                <p>
+                    <span th:text="${currentStats.startDate}">
+                        Start date
+                    </span>
+
+                    <span> to </span>
+
+                    <span th:text="${currentStats.endDate}">
+                        End date
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="dashboard-stat-grid">
+
+            <article class="stat-card">
+                <span class="dashboard-card-label">
+                    Completed Workouts
+                </span>
+
+                <strong th:text="${currentStats.completedWorkoutCount}">
+                    0
+                </strong>
+            </article>
+
+            <article class="stat-card">
+                <span class="dashboard-card-label">
+                    Total Calories
+                </span>
+
+                <strong th:text="${#numbers.formatDecimal(
+                        currentStats.totalCalories,
+                        1,
+                        1
+                )}">
+                    0.0
+                </strong>
+            </article>
+
+            <article class="stat-card">
+                <span class="dashboard-card-label">
+                    Total Minutes
+                </span>
+
+                <strong th:text="${currentStats.totalMinutes}">
+                    0
+                </strong>
+            </article>
+
+            <article class="stat-card">
+                <span class="dashboard-card-label">
+                    Average Duration
+                </span>
+
+                <strong>
+                    <span th:text="${#numbers.formatDecimal(
+                            currentStats.averageDuration,
+                            1,
+                            1
+                    )}">
+                        0.0
+                    </span>
+
+                    <small> min</small>
+                </strong>
+            </article>
+
+            <article class="stat-card">
+                <span class="dashboard-card-label">
+                    Most Common Type
+                </span>
+
+                <strong class="stat-card-text"
+                        th:text="${currentStats
+                            .mostFrequentExerciseTypeLabel}">
+                    No workout data
+                </strong>
+            </article>
+
+        </div>
+
+        <div class="dashboard-empty-message"
+             th:unless="${currentStats.hasWorkouts()}">
+
+            <h3>No completed workouts in this period</h3>
+
+            <p>
+                Record a completed workout to begin tracking
+                your progress.
+            </p>
+
+            <a class="btn btn-add"
+               th:href="@{/workouts/add}">
+                Record Workout
+            </a>
+        </div>
+
+    </section>
+
+    <!-- Current period versus previous period -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <h3>Period Comparison</h3>
+
+                <p>
+                    <span th:text="${currentStats.periodLabel}">
+                        Current period
+                    </span>
+
+                    compared with
+
+                    <span th:text="${previousStats.periodLabel}">
+                        Previous period
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="comparison-list">
+
+            <!-- Workout count comparison -->
+            <article class="comparison-card">
+                <div class="comparison-card-heading">
+                    <div>
+                        <h4>Completed Workouts</h4>
+
+                        <p>
+                            <span th:text="${currentStats.completedWorkoutCount}">
+                                0
+                            </span>
+
+                            currently versus
+
+                            <span th:text="${previousStats.completedWorkoutCount}">
+                                0
+                            </span>
+
+                            previously
+                        </p>
+                    </div>
+
+                    <div class="trend-value"
+                         th:classappend="${comparison.workoutCountTrend}">
+
+                        <span th:if="${comparison.workoutCountDifference > 0}">
+                            +
+                        </span>
+
+                        <span th:text="${comparison.workoutCountDifference}">
+                            0
+                        </span>
+
+                        <small>
+                            (
+                            <span th:text="${#numbers.formatDecimal(
+                                    comparison.workoutCountPercentageChange,
+                                    1,
+                                    1
+                            )}">
+                                0.0
+                            </span>
+                            %)
+                        </small>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${currentStats.periodLabel}">
+                        Current
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill current-progress"
+                             th:style="|width: ${comparison.currentWorkoutBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${currentStats.completedWorkoutCount}">
+                        0
+                    </strong>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${previousStats.periodLabel}">
+                        Previous
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill previous-progress"
+                             th:style="|width: ${comparison.previousWorkoutBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${previousStats.completedWorkoutCount}">
+                        0
+                    </strong>
+                </div>
+            </article>
+
+            <!-- Calories comparison -->
+            <article class="comparison-card">
+                <div class="comparison-card-heading">
+                    <div>
+                        <h4>Calories Burned</h4>
+
+                        <p>Estimated total calories</p>
+                    </div>
+
+                    <div class="trend-value"
+                         th:classappend="${comparison.calorieTrend}">
+
+                        <span th:if="${comparison.calorieDifference > 0}">
+                            +
+                        </span>
+
+                        <span th:text="${#numbers.formatDecimal(
+                                comparison.calorieDifference,
+                                1,
+                                1
+                        )}">
+                            0.0
+                        </span>
+
+                        <small>
+                            (
+                            <span th:text="${#numbers.formatDecimal(
+                                    comparison.caloriePercentageChange,
+                                    1,
+                                    1
+                            )}">
+                                0.0
+                            </span>
+                            %)
+                        </small>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${currentStats.periodLabel}">
+                        Current
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill current-progress"
+                             th:style="|width: ${comparison.currentCalorieBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${#numbers.formatDecimal(
+                            currentStats.totalCalories,
+                            1,
+                            1
+                    )}">
+                        0.0
+                    </strong>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${previousStats.periodLabel}">
+                        Previous
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill previous-progress"
+                             th:style="|width: ${comparison.previousCalorieBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${#numbers.formatDecimal(
+                            previousStats.totalCalories,
+                            1,
+                            1
+                    )}">
+                        0.0
+                    </strong>
+                </div>
+            </article>
+
+            <!-- Workout minutes comparison -->
+            <article class="comparison-card">
+                <div class="comparison-card-heading">
+                    <div>
+                        <h4>Workout Minutes</h4>
+
+                        <p>Total time spent exercising</p>
+                    </div>
+
+                    <div class="trend-value"
+                         th:classappend="${comparison.minuteTrend}">
+
+                        <span th:if="${comparison.minuteDifference > 0}">
+                            +
+                        </span>
+
+                        <span th:text="${comparison.minuteDifference}">
+                            0
+                        </span>
+
+                        <small>
+                            (
+                            <span th:text="${#numbers.formatDecimal(
+                                    comparison.minutePercentageChange,
+                                    1,
+                                    1
+                            )}">
+                                0.0
+                            </span>
+                            %)
+                        </small>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${currentStats.periodLabel}">
+                        Current
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill current-progress"
+                             th:style="|width: ${comparison.currentMinuteBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${currentStats.totalMinutes}">
+                        0
+                    </strong>
+                </div>
+
+                <div class="comparison-row">
+                    <span th:text="${previousStats.periodLabel}">
+                        Previous
+                    </span>
+
+                    <div class="progress-track">
+                        <div class="progress-fill previous-progress"
+                             th:style="|width: ${comparison.previousMinuteBarPercentage}%;|">
+                        </div>
+                    </div>
+
+                    <strong th:text="${previousStats.totalMinutes}">
+                        0
+                    </strong>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- Recent completed workouts -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <h3>Recent Workouts</h3>
+
+                <p>Your five most recent completed workouts.</p>
+            </div>
+
+            <a class="btn btn-view"
+               th:href="@{/history}">
+                View Full History
+            </a>
+        </div>
+
+        <div class="dashboard-empty-message"
+             th:if="${#lists.isEmpty(recentWorkouts)}">
+
+            <h3>No recent workouts</h3>
+
+            <p>
+                Completed workouts will appear here after
+                they are recorded.
+            </p>
+        </div>
+
+        <div class="table-scroll"
+             th:unless="${#lists.isEmpty(recentWorkouts)}">
+
+            <table class="dashboard-recent-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Exercise</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Calories</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="workout : ${recentWorkouts}">
+
+                    <td th:text="${workout.workoutDate}">
+                        2026-08-03
+                    </td>
+
+                    <td th:text="${workout.exercise.name}">
+                        Exercise
+                    </td>
+
+                    <td th:text="${workout.exercise.type}">
+                        Type
+                    </td>
+
+                    <td>
+                        <span th:text="${workout.duration}">
+                            0
+                        </span>
+                        min
+                    </td>
+
+                    <td th:text="${workout.calories != null
+                            ? #numbers.formatDecimal(
+                                workout.calories,
+                                1,
+                                1
+                              )
+                            : '0.0'}">
+                        0.0
+                    </td>
+
+                    <td>
+                        <a class="btn btn-view"
+                           th:href="@{/history/{id}(id=${workout.id})}">
+                            View
+                        </a>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

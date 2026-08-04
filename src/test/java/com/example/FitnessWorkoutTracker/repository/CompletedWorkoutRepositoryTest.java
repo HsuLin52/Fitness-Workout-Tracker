@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +29,17 @@ class CompletedWorkoutRepositoryTest {
 
     @Autowired
     private CompletedWorkoutRepository completedWorkoutRepository;
+
+    @BeforeEach
+    void isolateRepositoryTests() {
+    // Temporarily remove existing workouts inside the test transaction
+    // so personal/sample database records do not affect test results.
+    // Spring rolls the transaction back after each test, so the real
+    // workout records are not permanently deleted.
+    completedWorkoutRepository.deleteAllInBatch();
+    entityManager.flush();
+    entityManager.clear();
+}
 
     private User persistUser(String email) {
         User user = new User("Integration Test User", email);

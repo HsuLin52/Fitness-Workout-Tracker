@@ -12,7 +12,6 @@ import com.example.FitnessWorkoutTracker.service.CompletedWorkoutService;
 import com.example.FitnessWorkoutTracker.service.WorkoutPlanItemService;
 import com.example.FitnessWorkoutTracker.service.WorkoutPlanService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -246,15 +245,6 @@ public class CompletedWorkoutController {
         completedWorkoutService.deleteWorkout(id);
 
         return "redirect:/workouts";
-    }
-
-    // Shows a friendly page instead of a stack trace when a workout, plan, plan item, or
-    // exercise referenced by a /workouts URL can't be found (e.g. a stale or mistyped link).
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(WorkoutNotFoundException.class)
-    public String handleWorkoutNotFound(WorkoutNotFoundException ex, Model model) {
-        model.addAttribute("message", ex.getMessage());
-        return "workout-not-found";
     }
 
     // Resolves the user, exercise, and optional plan for a submitted form, enforcing that

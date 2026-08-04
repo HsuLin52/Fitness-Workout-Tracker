@@ -7,15 +7,12 @@ import com.example.FitnessWorkoutTracker.service.CompletedWorkoutService;
 import com.example.FitnessWorkoutTracker.service.WorkoutPlanService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -337,16 +334,5 @@ public class WorkoutHistoryController {
                 "sortDir",
                 sortDir
         );
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(WorkoutNotFoundException.class)
-    public String handleWorkoutNotFound(
-            WorkoutNotFoundException ex,
-            Model model
-    ) {
-        model.addAttribute("message", ex.getMessage());
-
-        return "workout-not-found";
     }
 }

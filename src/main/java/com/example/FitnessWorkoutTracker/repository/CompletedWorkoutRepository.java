@@ -14,32 +14,50 @@ import java.time.LocalDate;
 import java.util.List;
 
 // Provides database operations and shared query methods for completed workouts.
-// Date-range and exercise-type queries here are used by the history (Member 4)
-// and dashboard (Member 5) modules.
+// Date-range and exercise-type queries here are used by the history
+// and dashboard modules.
 public interface CompletedWorkoutRepository
         extends JpaRepository<CompletedWorkout, Integer> {
 
-    // All workouts recorded by one user
+    // All workouts recorded by one user.
     List<CompletedWorkout> findByUser(User user);
 
-    // All workouts recorded from one workout plan
-    List<CompletedWorkout> findByWorkoutPlan(WorkoutPlan workoutPlan);
+    // All workouts recorded from one workout plan.
+    List<CompletedWorkout> findByWorkoutPlan(
+            WorkoutPlan workoutPlan
+    );
 
-    // All workouts within an inclusive date range
+    // All workouts within an inclusive date range.
     List<CompletedWorkout> findByWorkoutDateBetween(
             LocalDate startDate,
             LocalDate endDate
     );
 
-    // All workouts for one user within an inclusive date range
+    // All workouts for one user within an inclusive date range.
     List<CompletedWorkout> findByUserAndWorkoutDateBetween(
             User user,
             LocalDate startDate,
             LocalDate endDate
     );
 
-    // All workouts whose exercise belongs to the given exercise type
-    List<CompletedWorkout> findByExercise_Type(ExerciseType type);
+    // All workouts whose exercise belongs to the given exercise type.
+    List<CompletedWorkout> findByExercise_Type(
+            ExerciseType type
+    );
+
+    // Dashboard query:
+    // Retrieves only fully completed workouts in an inclusive date range.
+    // Results are ordered from newest to oldest.
+    List<CompletedWorkout>
+    findByCompletedTrueAndWorkoutDateBetweenOrderByWorkoutDateDesc(
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
+    // Dashboard query:
+    // Retrieves the five most recent fully completed workouts.
+    List<CompletedWorkout>
+    findTop5ByCompletedTrueOrderByWorkoutDateDescIdDesc();
 
     // Search and filter query for the workout-history page.
     // Pageable handles pagination and sorting.

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Users</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+
+    <div class="history-heading">
+        <div>
+            <h2>Users</h2>
+
+            <p>
+                Manage the users available for workout plans
+                and completed workouts.
+            </p>
+        </div>
+
+        <a th:href="@{/users/add}"
+           class="btn btn-add">
+            Add User
+        </a>
+    </div>
+
+    <p class="success-message"
+       th:if="${created}">
+        User added successfully.
+    </p>
+
+    <div class="empty-state"
+         th:if="${#lists.isEmpty(users)}">
+
+        <h3>No users found</h3>
+
+        <p>
+            Add your first user to begin creating workout plans
+            and recording completed workouts.
+        </p>
+
+        <a th:href="@{/users/add}"
+           class="btn btn-add">
+            Add First User
+        </a>
+
+    </div>
+
+    <div class="table-scroll"
+         th:unless="${#lists.isEmpty(users)}">
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email Address</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="user : ${users}">
+
+                <td th:text="${user.id}">
+                    1
+                </td>
+
+                <td th:text="${user.name}">
+                    Example User
+                </td>
+
+                <td th:text="${user.email}">
+                    example@email.com
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -3,28 +3,41 @@
 
 <body>
 
-<header th:fragment="header">
-    <h1>Fitness Workout Tracker</h1>
+    <header th:fragment="header">
 
-    <nav>
-        <a th:href="@{/users}">Users</a>
-        <a th:href="@{/users/add}">Add User</a>
+        <div class="header-row">
+            <h1>Fitness Workout Tracker</h1>
 
-        <a th:href="@{/dashboard}">Dashboard</a>
+            <button
+                    type="button"
+                    class="menu-toggle"
+                    aria-controls="main-navigation"
+                    aria-expanded="false">
+                Menu
+            </button>
+        </div>
 
-        <a th:href="@{/exercises}">Exercises</a>
-        <a th:href="@{/exercises/add}">Add Exercise</a>
+        <nav id="main-navigation">
+            <a th:href="@{/users}">Users</a>
+            <a th:href="@{/users/add}">Add User</a>
 
-        <a th:href="@{/workouts}">Workouts</a>
-        <a th:href="@{/history}">Workout History</a>
-        <a th:href="@{/workouts/add}">Record Workout</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
 
-        <a th:href="@{/plans}">Workout Plans</a>
-        <a th:href="@{/plans/add}">Add Workout Plan</a>
-    </nav>
+            <a th:href="@{/exercises}">Exercises</a>
+            <a th:href="@{/exercises/add}">Add Exercise</a>
 
-    <hr>
-</header>
+            <a th:href="@{/workouts}">Workouts</a>
+            <a th:href="@{/history}">Workout History</a>
+            <a th:href="@{/workouts/add}">Record Workout</a>
+
+            <a th:href="@{/plans}">Workout Plans</a>
+            <a th:href="@{/plans/add}">Add Workout Plan</a>
+        </nav>
+
+        <hr>
+
+        <script th:src="@{/js/mobile-menu.js}"></script>
+    </header>
 
 </body>
 </html>

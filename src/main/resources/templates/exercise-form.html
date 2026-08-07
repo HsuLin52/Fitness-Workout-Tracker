@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title
             th:text="${exercise.id == null}
@@ -68,8 +69,8 @@
 
               <p
                       class="error"
-                      th:if="${#fields.hasErrors('name')}"
-                      th:errors="*{name}">
+                      th:if="${#fields.hasErrors('type')}"
+                      th:errors="*{type}">
               </p>
           </div>
 
@@ -90,8 +91,8 @@
 
               <p
                       class="error"
-                      th:if="${#fields.hasErrors('name')}"
-                      th:errors="*{name}">
+                      th:if="${#fields.hasErrors('caloriesPerMinute')}"
+                      th:errors="*{caloriesPerMinute}">
               </p>
           </div>
 

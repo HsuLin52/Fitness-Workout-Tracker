@@ -15,9 +15,22 @@
 
     <h2 th:text="${workoutPlan.id == null ? 'Add Workout Plan' : 'Edit Workout Plan'}"></h2>
 
-    <form th:object="${workoutPlan}"
-          th:action="${workoutPlan.id == null} ? @{/plans/add} : @{/plans/edit}"
-          method="post">
+    <div th:if="${#lists.isEmpty(users)}" class="empty-state">
+        <h3>No users available</h3>
+
+        <p>
+            You must add a user before creating a workout plan.
+        </p>
+
+        <a th:href="@{/users/add}" class="btn btn-add">
+            Add User
+        </a>
+    </div>
+
+    <form th:unless="${#lists.isEmpty(users)}"
+            th:object="${workoutPlan}"
+            th:action="${workoutPlan.id == null} ? @{/plans/add} : @{/plans/edit}"
+            method="post">
 
         <input type="hidden" th:field="*{id}">
 

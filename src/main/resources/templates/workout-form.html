@@ -19,11 +19,24 @@
         Completed Workout
     </h2>
 
+    <div th:if="${#lists.isEmpty(users)}" class="empty-state">
+        <h3>No users available</h3>
+
+        <p>
+            You must add a user before recording a completed workout.
+        </p>
+
+        <a th:href="@{/users/add}" class="btn btn-add">
+            Add User
+        </a>
+    </div>
+
     <p th:if="${formError}" th:text="${formError}" style="color:#b71c1c; font-weight:bold;"></p>
 
-    <form th:object="${completedWorkout}"
-          th:action="${isEdit} ? @{/workouts/edit} : @{/workouts/add}"
-          method="post">
+    <form th:unless="${#lists.isEmpty(users)}"
+        th:object="${completedWorkout}"
+        th:action="${isEdit} ? @{/workouts/edit} : @{/workouts/add}"
+        method="post">
 
         <input type="hidden" th:field="*{id}">
 

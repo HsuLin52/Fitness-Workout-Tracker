@@ -826,6 +826,24 @@ button {
     }
 }
 
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.menu-toggle {
+    display: none;
+    background-color: #33691e;
+    color: white;
+    font-weight: bold;
+}
+
+.menu-toggle:hover {
+    background-color: #558b2f;
+}
+
 /* Mobile layout */
 
 @media (max-width: 700px) {
@@ -837,15 +855,32 @@ button {
         font-size: 25px;
     }
 
+    .header-row h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     header nav {
+        display: none;
+        margin-top: 18px;
         align-items: stretch;
         flex-direction: column;
         gap: 5px;
     }
 
+    header nav.is-open {
+        display: flex;
+    }
+
     header nav a {
         display: block;
-        padding: 7px 0;
+        padding: 9px 0;
     }
 
     main,
@@ -906,6 +941,7 @@ button {
         min-width: 0;
     }
 }
+
 /* User Management */
 
 .success-message {
